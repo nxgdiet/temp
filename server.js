@@ -695,7 +695,7 @@ server.on('request', (req, res) => {
 });
 
 // Start server
-const PORT = process.env.PORT || 8001;
+const PORT = process.env.PORT || 8080;
 server.listen(PORT, () => {
   log(`🎯 TokenRivals Room Server running on port ${PORT}`);
   log(`📊 Health check available at http://localhost:${PORT}/health`);
