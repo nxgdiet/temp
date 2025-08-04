@@ -1,5 +1,10 @@
-// Load environment variables from .env.local
-require('dotenv').config({ path: '.env.local' });
+// Load environment variables from .env.local (optional, for local development)
+try {
+  require('dotenv').config({ path: '.env.local' });
+} catch (error) {
+  // .env.local file not found, using environment variables directly
+  console.log('📝 Using environment variables directly (no .env.local file)');
+}
 
 const WebSocket = require('ws');
 const http = require('http');
@@ -696,9 +701,17 @@ server.on('request', (req, res) => {
 
 // Start server
 const PORT = process.env.PORT || 8080;
-server.listen(PORT, () => {
+log(`🚀 Attempting to start server on port ${PORT}`);
+log(`📋 Environment check - PORT: ${process.env.PORT}, NODE_ENV: ${process.env.NODE_ENV}`);
+
+server.listen(PORT, '0.0.0.0', () => {
   log(`🎯 TokenRivals Room Server running on port ${PORT}`);
   log(`📊 Health check available at http://localhost:${PORT}/health`);
+  log(`🌐 Server bound to 0.0.0.0:${PORT}`);
+}).on('error', (error) => {
+  log(`❌ Server failed to start: ${error.message}`, 'ERROR');
+  log(`🔍 Error details: ${error.code}`, 'ERROR');
+  process.exit(1);
 });
 
 // Graceful shutdown

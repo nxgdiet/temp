@@ -59,5 +59,6 @@ postcss.config.mjs
 # Keep only server-related files
 !server.js
 !server-package.json
+!start.sh
 !lib/tournament-owner-service.js
 !lib/tournament-owner-service.ts 

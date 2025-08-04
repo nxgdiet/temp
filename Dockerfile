@@ -1,11 +1,11 @@
 # Use Node.js 18 Alpine for smaller image size
 FROM node:18-alpine
 
+# Set environment variable to hardcode port 8080
+ENV PORT=8080
+
 # Set working directory
 WORKDIR /app
-
-# Install dependencies for better caching
-RUN apk add --no-cache python3 make g++
 
 # Copy package files first for better layer caching
 COPY server-package.json package.json
@@ -18,15 +18,8 @@ RUN npm install
 COPY server.js ./
 COPY lib/ ./lib/
 
-# Create .env.local file if it doesn't exist (will be overridden by environment variables)nig
-RUN touch .env.local
-
-# Expose the port the server runs on
+# Expose port 8080
 EXPOSE 8080
-
-# Health check
-HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-  CMD node -e "const http = require('http'); const req = http.request({hostname: 'localhost', port: process.env.PORT || 8080, path: '/health', method: 'GET'}, (res) => { process.exit(res.statusCode === 200 ? 0 : 1); }); req.on('error', () => process.exit(1)); req.end();"
 
 # Start the server
 CMD ["npm", "start"] 
