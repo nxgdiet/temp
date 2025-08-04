@@ -26,7 +26,7 @@ EXPOSE 8080
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-  CMD node -e "const http = require('http'); const req = http.request({hostname: 'localhost', port: 8001, path: '/health', method: 'GET'}, (res) => { process.exit(res.statusCode === 200 ? 0 : 1); }); req.on('error', () => process.exit(1)); req.end();"
+  CMD node -e "const http = require('http'); const req = http.request({hostname: 'localhost', port: process.env.PORT || 8080, path: '/health', method: 'GET'}, (res) => { process.exit(res.statusCode === 200 ? 0 : 1); }); req.on('error', () => process.exit(1)); req.end();"
 
 # Start the server
 CMD ["npm", "start"] 

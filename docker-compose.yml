@@ -4,10 +4,10 @@ services:
   tokenrivals-server:
     build: .
     ports:
-      - "8001:8001"
+      - "8001:8080"
     environment:
       # Server configuration
-      - PORT=8001
+      - PORT=8080
       
       # Blockchain configuration (replace with your actual values)
       - OWNER_PRIVATE_KEY=your_owner_private_key_here
@@ -22,7 +22,7 @@ services:
       - NEXT_PUBLIC_REOWN_PROJECT_ID=your_reown_project_id_here
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "node", "-e", "const http = require('http'); const req = http.request({hostname: 'localhost', port: 8001, path: '/health', method: 'GET'}, (res) => { process.exit(res.statusCode === 200 ? 0 : 1); }); req.on('error', () => process.exit(1)); req.end();"]
+      test: ["CMD", "node", "-e", "const http = require('http'); const req = http.request({hostname: 'localhost', port: 8080, path: '/health', method: 'GET'}, (res) => { process.exit(res.statusCode === 200 ? 0 : 1); }); req.on('error', () => process.exit(1)); req.end();"]
       interval: 30s
       timeout: 10s
       retries: 3

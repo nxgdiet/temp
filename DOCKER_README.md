@@ -46,7 +46,7 @@ This directory contains Docker configuration to run the TokenRivals WebSocket se
 
 | Variable | Description | Default |
 |----------|-------------|---------|
-| `PORT` | Server port | `8001` |
+| `PORT` | Server port | `8080` (Cloud Run) / `8001` (local) |
 | `OWNER_PRIVATE_KEY` | Blockchain owner private key | Required |
 | `NEXT_PUBLIC_CONTRACT_ADDRESS` | Smart contract address | `0x26d215752f68bc2254186f9f6ff068b8c4bdfd37` |
 | `NEXT_PUBLIC_RPC_URL` | Blockchain RPC URL | `https://node.ghostnet.etherlink.com` |
@@ -56,7 +56,7 @@ This directory contains Docker configuration to run the TokenRivals WebSocket se
 
 ## Health Check
 
-The server includes a health check endpoint at `http://localhost:8001/health` that returns:
+The server includes a health check endpoint at `http://localhost:8080/health` (Cloud Run) or `http://localhost:8001/health` (local) that returns:
 ```json
 {
   "status": "healthy",
@@ -101,4 +101,30 @@ For development with hot reloading:
 docker-compose -f docker-compose.dev.yml up
 ```
 
-Note: You'll need to create a `docker-compose.dev.yml` file with volume mounts for development. 
+Note: You'll need to create a `docker-compose.dev.yml` file with volume mounts for development.
+
+## Cloud Run Deployment
+
+For Google Cloud Run deployment:
+
+1. **Build and push the image**:
+   ```bash
+   gcloud builds submit --tag gcr.io/YOUR_PROJECT_ID/tokenrivals-server
+   ```
+
+2. **Deploy to Cloud Run**:
+   ```bash
+   gcloud run deploy tokenrivals-server \
+     --image gcr.io/YOUR_PROJECT_ID/tokenrivals-server \
+     --platform managed \
+     --region us-central1 \
+     --allow-unauthenticated \
+     --port 8080 \
+     --set-env-vars "OWNER_PRIVATE_KEY=your_private_key,NEXT_PUBLIC_CONTRACT_ADDRESS=0x26d215752f68bc2254186f9f6ff068b8c4bdfd37,NEXT_PUBLIC_RPC_URL=https://node.ghostnet.etherlink.com,NEXT_PUBLIC_CHAIN_ID=128123"
+   ```
+
+3. **Important Cloud Run Notes**:
+   - Cloud Run automatically sets `PORT=8080`
+   - The server must listen on the port specified by the `PORT` environment variable
+   - Health checks are configured to use port 8080
+   - WebSocket connections will use the Cloud Run URL 
