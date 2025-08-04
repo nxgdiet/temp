@@ -22,7 +22,7 @@ COPY lib/ ./lib/
 RUN touch .env.local
 
 # Expose the port the server runs on
-EXPOSE 8001
+EXPOSE 8080
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
